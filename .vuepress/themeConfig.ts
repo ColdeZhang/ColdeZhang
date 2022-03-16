@@ -14,7 +14,7 @@ export default defineThemeConfig({
 
   logo: "https://i.loli.net/2021/07/26/UmFIxdXfEv7SKah.png",
 
-  //repo: "",
+  repo: "https://github.com/ColdeZhang/blog_docs",
 
   docsDir: "demo/src",
 

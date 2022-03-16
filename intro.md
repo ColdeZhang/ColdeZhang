@@ -5,6 +5,12 @@ article: false
 sidebar: false
 ---
 
+![](https://img.shields.io/static/v1?label=电话：&message=+86-13073226553&style=for-the-badge&color=rgba(135,206,250,1)&labelColor=rgba(32,178,170,1))
+
+![](https://img.shields.io/static/v1?label=邮箱：&message=coldezhang@foxmail.com&style=for-the-badge&color=rgba(135,206,250,1)&labelColor=rgba(32,178,170,1))
+
+![](https://img.shields.io/static/v1?label=网站：&message=http://blog.deercloud.site&style=for-the-badge&color=rgba(135,206,250,1)&labelColor=rgba(32,178,170,1))
+
 ## 教育背景
 
 ### 西南交通大学
