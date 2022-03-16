@@ -8,15 +8,15 @@ export default defineNavbarConfig([
     children: [
       {
         text: "学习笔记",
-        link: "http://blog.deercloud.site/category/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/",
+        link: "/category/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/",
       },
       {
         text: "教程分享",
-        link: "http://blog.deercloud.site/category/%E6%95%99%E7%A8%8B%E5%88%86%E4%BA%AB/",
+        link: "/category/%E6%95%99%E7%A8%8B%E5%88%86%E4%BA%AB/",
       },
       {
         text: "项目说明",
-        link: "http://blog.deercloud.site/category/%E9%A1%B9%E7%9B%AE%E8%AF%B4%E6%98%8E/",
+        link: "/category/%E9%A1%B9%E7%9B%AE%E8%AF%B4%E6%98%8E/",
       },
     ],
   },
@@ -26,14 +26,17 @@ export default defineNavbarConfig([
     children: [
       {
         text: "Minecraft",
-        link: "http://mc.deercloud.site",
+        children: [
+          {text: "白鹿原服务器", link: "http://mc.deercloud.site"},
+          {text: "MCNPS论坛", link: "http://mcnps.deercloud.site"}
+        ]
       }
     ]
   },
   {
     text: "时间轴",
     icon: "time_fill",
-    link: "http://blog.deercloud.site/timeline/",
+    link: "/timeline/",
   },
   
   // { text: "使用指南", icon: "creative", link: "/guide/" },

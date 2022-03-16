@@ -19,6 +19,10 @@ sidebar: false
 
 <!-- more -->
 
+## 项目地址
+
+[http://blog.deercloud.site/pre/](http://blog.deercloud.site/pre/)
+
 ## 技术思路
 
  1. 以“判例法”为原则，将裁判文书进行量化处理，制作成数据集；
