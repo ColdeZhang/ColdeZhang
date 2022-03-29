@@ -3,7 +3,7 @@ import navbar from "./navbar";
 import sidebar from "./sidebar";
 
 export default defineThemeConfig({
-  hostname: "http://blog.deercloud.site",
+  hostname: "https://blog.deercloud.site",
 
   author: {
     name: "鹿鸣",

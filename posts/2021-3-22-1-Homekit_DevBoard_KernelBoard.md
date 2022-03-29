@@ -33,7 +33,7 @@ sidebar: false
 
 - 该核心板全部文件托管在：[Github仓库](https://github.com/ColdeZhang/Kernel_Board)
 
-- 该核心板配套的代码教程参见：[这里](http://blog.deercloud.site/how_to_code_homekit_with_arduino)
+- 该核心板配套的代码教程参见：[这里](https://blog.deercloud.site/how_to_code_homekit_with_arduino)
 
 - 该核心板配套的扩展版系列目前有：？？、？？、？？、？？
 
