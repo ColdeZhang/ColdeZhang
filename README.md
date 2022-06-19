@@ -4,3 +4,9 @@ article: false
 ## 这里是存放本人博客的 github 备份仓库。
 
 ## 博客地址: [https://blog.deercloud.site](https://blog.deercloud.site)
+
+
+
+#### 我的Github数据
+| <img align="center" src="https://github-readme-stats.vercel.app/api?username=DreamVoid&show_icons=true&locale=cn&hide_border=true&theme=buefy" alt="Anurag's github stats" /> | <img align="center" src="https://github-readme-stats.vercel.app/api/top-langs/?username=DreamVoid&layout=compact&locale=cn&hide_border=true&theme=buefy" /> |
+| ------------- | ------------- |
