@@ -1,7 +1,7 @@
 
 ## 关于我
 
-## 博客地址: [https://blog.deercloud.site](https://blog.deercloud.site)
+## [博客](https://blog.deercloud.site) | [个人简历](https://blog.deercloud.site/intro.html)
 
 
 
