@@ -1,7 +1,10 @@
 
 ## 关于我
 
-## [博客](https://blog.deercloud.site) | [个人简历](https://blog.deercloud.site/intro.html)
+## 传送门
+
+- [博客](https://blog.deercloud.site)
+- [个人简历](https://blog.deercloud.site/intro.html)
 
 
 
