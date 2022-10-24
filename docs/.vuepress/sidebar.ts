@@ -36,10 +36,6 @@ export default defineSidebarConfig(
       "10",
       "11",
       "12",
-    ],
-    "/DataStructure/": [
-    	"",
-    	"时间复杂度",
     ]
   }
 );

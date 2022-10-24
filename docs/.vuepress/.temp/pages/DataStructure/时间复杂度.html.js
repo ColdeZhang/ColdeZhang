@@ -104,18 +104,18 @@ export const data = {
   ],
   "git": {
     "createdTime": 1661140776000,
-    "updatedTime": 1661157316000,
+    "updatedTime": 1661171534000,
     "contributors": [
       {
         "name": "张宇衡",
         "email": "coldezhang@foxmail.com",
-        "commits": 2
+        "commits": 3
       }
     ]
   },
   "readingTime": {
-    "minutes": 1.58,
-    "words": 474
+    "minutes": 2.06,
+    "words": 618
   },
   "filePathRelative": "DataStructure/时间复杂度.md"
 }
