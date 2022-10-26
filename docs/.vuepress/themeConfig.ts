@@ -3,11 +3,11 @@ import navbar from "./navbar";
 import sidebar from "./sidebar";
 
 export default defineThemeConfig({
-  hostname: "https://blog.deercloud.site",
+  hostname: "http://blog.deercloud.site",
 
   author: {
     name: "鹿鸣",
-    url: "https://blog.deercloud.site",
+    url: "http://blog.deercloud.site",
   },
 
   iconPrefix: "iconfont icon-",

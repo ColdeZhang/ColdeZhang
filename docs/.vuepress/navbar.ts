@@ -32,7 +32,7 @@ export default defineNavbarConfig([
       {
         text: "Minecraft",
         children: [
-          {text: "白鹿原服务器", link: "https://mc.deercloud.site"},
+          {text: "白鹿原服务器", link: "http://mc.deercloud.site"},
           {text: "MCNPS论坛", link: "https://mcnps.deercloud.site"}
         ]
       }
