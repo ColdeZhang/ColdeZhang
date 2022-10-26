@@ -3,8 +3,8 @@
 
 ## 传送门
 
-- [博客](https://blog.deercloud.site)
-- [个人简历](https://blog.deercloud.site/intro.html)
+- [博客](http://blog.deercloud.site)
+- [个人简历](http://blog.deercloud.site/intro.html)
 
 
 
