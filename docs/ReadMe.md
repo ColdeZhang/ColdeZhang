@@ -12,7 +12,7 @@ projects:
   - icon: ---
     name: 信用卡犯罪预测系统
     desc: 利用机器学习的决策树算法构建了一个可视化的、支持双向检索、模糊检索功能的信用卡套现定罪辅助系统。
-    link: /pre/
+    link: https://sslbackend.deercloud.site:446/pre/
 
 
   - icon: ---

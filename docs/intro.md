@@ -31,7 +31,7 @@ sidebar: false
 
 通过对过往判例的分析处理，描绘动态的用户信息画像，使机器学习，从而建立关于信用卡犯罪行为的辅助分析系统。之后，帮助法官利用辅助分析系统进行司法预测，根据案件基本信息检索出预测的罪名、相关定罪依据以及过往案例，在判案过程中提高效率。
 
-项目地址：[http://blog.deercloud.site/pre/](/pre/) 
+项目地址：[http://blog.deercloud.site/pre/](https://sslbackend.deercloud.site:446/pre/) 
 
 
 ### GameHub游戏创意分享社区

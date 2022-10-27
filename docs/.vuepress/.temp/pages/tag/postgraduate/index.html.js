@@ -17,7 +17,7 @@ export const data = {
         "meta",
         {
           "property": "og:url",
-          "content": "https://blog.deercloud.site/tag/postgraduate/"
+          "content": "http://blog.deercloud.site/tag/postgraduate/"
         }
       ],
       [
