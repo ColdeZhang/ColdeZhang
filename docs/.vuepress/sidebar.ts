@@ -24,9 +24,9 @@ export default defineSidebarConfig(
     ],
     "/vulkan-tutorial/": [
       {
-        "drawing-a-triangle": [
+        "/drawing-a-triangle/": [
             {
-              "setup": [
+              "/setup/": [
                 "base_code",
                 "instance"
               ]
