@@ -1,11 +1,11 @@
 ---
-title: 基础代码
+title: 基础代码 框架
 date: 2022-10-26
 sidebar: auto
-article: false
+article: true
 ---
 
-## 通用结构
+## 通用结构 框架
 
 在上一章中，您创建了一个具有所有正确配置的Vulkan项目，并使用示例代码进行了测试。在本章中，我们将从头开始使用以下代码：
 
@@ -106,3 +106,60 @@ glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);	// 禁用窗口大小调整
 ```
 
 现在剩下的就是创建实际的窗口。添加一个成员变量`GLFWwindow* window;`来存储窗口，并使用以下方式初始化窗口：
+
+```c++
+window = glfwCreateWindow(800, 600, "Vulkan", nullptr, nullptr);
+```
+
+前三个参数指定了窗口的宽度、高度和标题。第四个参数用于指定在哪个显示器打开窗口，最后一个参数仅与OpenGL相关。
+
+使用常量而不是硬编码的宽度和高度数字是一个好主意，因为我们将来会在很多地方用到这些值。我在`HelloTriangleApplication`类定义上方添加了以下行：
+
+```c++
+const uint32_t WIDTH = 800;
+const uint32_t HEIGHT = 600;
+```
+
+修改创建窗口的代码：
+
+```c++
+window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan", nullptr, nullptr);
+```
+
+`initWindow`现在看起来应该是这样的：
+
+```c++
+void initWindow() {
+    glfwInit();
+
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+
+    window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan", nullptr, nullptr);
+}
+```
+
+为了保持应用程序运行，直到发生错误或窗口关闭，我们需要向`mainLoop`函数添加事件循环，如下所示：
+
+```c++
+void mainLoop() {
+    while (!glfwWindowShouldClose(window)) {
+        glfwPollEvents();
+    }
+}
+```
+
+这个代码应该相当不言自明。它循环并检查事件，例如按下X按钮，直到窗口被用户关闭。这也是一个循环，我们稍后将调用一个函数来渲染单个帧。
+
+窗口关闭之后，我们需要回收、清理资源。如下：
+
+```c++
+void cleanup() {
+    glfwDestroyWindow(window);
+    glfwTerminate();
+}
+```
+
+当您现在运行程序时，您应该会看到一个名为Vulkan的窗口出现，直到应用程序通过关闭窗口而终止。
+
+![](https://sslbackend.deercloud.site:450/LightPicture/2022/10/aed2c67ef5550ce4.png)
