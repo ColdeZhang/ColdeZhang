@@ -22,17 +22,10 @@ export default defineSidebarConfig(
       "chapter8",
       "chapter9",
     ],
-    "/vulkan-tutorial/": [
-      {
-        "/drawing-a-triangle/": [
-            {
-              "/setup/": [
-                "base_code",
-                "instance"
-              ]
-            }
-        ],
-      },
+    "/vulkan-tutorial/drawing-a-triangle/": [
+      "",
+      "setup",
+      "presentation",
     ],
     "/CCNA/": [
       "",
