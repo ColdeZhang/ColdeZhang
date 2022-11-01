@@ -1,7 +1,6 @@
 ---
 title: Vulkan Tutorial - Drawing a Triangle
 date: 2022-11-01
-sidebar: false
 categories:
  - 学习笔记
 tags:

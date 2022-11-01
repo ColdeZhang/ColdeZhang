@@ -1,7 +1,6 @@
 ---
 title: 项目基础
 date: 2022-10-26
-sidebar: false
 article: false
 ---
 
@@ -291,3 +290,10 @@ if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
 >
 > ![](https://sslbackend.deercloud.site:450/LightPicture/2022/11/187ad181a7bb2d4b.png)
 
+### 检查扩展支持性
+
+如果您查看[vkCreateInstance文档](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCreateInstance.html)，那么您可能会注意到有一个错误代码为`VK_ERROR_EXTENSION_NOT_PRESENT`。我们可以简单地指定我们需要的扩展，并在错误代码返回时终止。对于窗口系统界面等基本扩展来说，这是有道理的，但是如果我们想检查可选功能呢？
+
+要在创建实例之前检索受支持的扩展列表，有vkEnumerateInstanceExtensionProperties函数。它需要一个指向存储扩展数量的变量的指针和一个VkExtensionProperties数组来存储扩展的详细信息。它还需要一个可选的第一个参数，允许我们按特定的验证层过滤扩展，我们现在将忽略这一点。
+
+要分配一个数组来保存扩展详细信息，我们首先需要知道有多少。您可以通过将后一个参数留空来请求扩展的数量：
