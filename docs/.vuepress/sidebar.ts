@@ -25,7 +25,6 @@ export default defineSidebarConfig(
     "/vulkan-tutorial/drawing-a-triangle/": [
       "",
       "setup",
-      "presentation",
     ],
     "/CCNA/": [
       "",
