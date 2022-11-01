@@ -1,7 +1,7 @@
 ---
 title: 项目基础
 date: 2022-10-26
-sidebar: true
+sidebar: false
 article: false
 ---
 
