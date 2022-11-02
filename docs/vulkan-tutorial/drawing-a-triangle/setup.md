@@ -214,7 +214,7 @@ createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 createInfo.pApplicationInfo = &appInfo;
 ```
 
-`sType` 和`pApplicationInfo`很好理解。接下来的变量需要为其指定所需的全局扩展。如概述一章所述，Vulkan是一个平台不可知的API，这意味着您需要一个扩展来与系统交互。GLFW有一个方便的内置函数，可以返回它所需的扩展，我们可以传递给结构：
+`sType` 和`pApplicationInfo`很好理解。接下来的变量需要为其指定所需的全局扩展。如概述一章所述，Vulkan是一个平台不可知的API，这意味着窗口应用（GLFW）需要一个扩展来使用Vulkan API。GLFW有一个方便的内置函数，可以返回它所需的扩展，我们可以传递给结构：
 
 ```c++
 uint32_t glfwExtensionCount = 0;
@@ -290,10 +290,42 @@ if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
 >
 > ![](https://sslbackend.deercloud.site:450/LightPicture/2022/11/187ad181a7bb2d4b.png)
 
-### 检查扩展支持性
+### 检查所有设备支持（可用）的扩展
 
-如果您查看[vkCreateInstance文档](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCreateInstance.html)，那么您可能会注意到有一个错误代码为`VK_ERROR_EXTENSION_NOT_PRESENT`。我们可以简单地指定我们需要的扩展，并在错误代码返回时终止。对于窗口系统界面等基本扩展来说，这是有道理的，但是如果我们想检查可选功能呢？
+如果您查看[vkCreateInstance文档](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCreateInstance.html)，那么您可能会注意到有一个错误代码为`VK_ERROR_EXTENSION_NOT_PRESENT`。我们可以不停的尝试各种扩展，直到不再出现错误。如果只是为了找到我们当前需要的扩展来说，这么做当然没问题，可是如果我们希望能够知道所有支持的扩展呢？
 
-要在创建实例之前检索受支持的扩展列表，有vkEnumerateInstanceExtensionProperties函数。它需要一个指向存储扩展数量的变量的指针和一个VkExtensionProperties数组来存储扩展的详细信息。它还需要一个可选的第一个参数，允许我们按特定的验证层过滤扩展，我们现在将忽略这一点。
+要在创建实例之前检索受支持的扩展列表，我们可以使用[`vkEnumerateInstanceExtensionProperties`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkEnumerateInstanceExtensionProperties.html)函数。它需要一个整数变量指针用于保存支持的扩展数量，和一个[`VkExtensionProperties`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkExtensionProperties.html)数组来存储扩展的详细信息。它还有一个可选的第一个参数，允许我们按特定的验证层过滤扩展，我们现在将忽略这一点。
 
-要分配一个数组来保存扩展详细信息，我们首先需要知道有多少。您可以通过将后一个参数留空来请求扩展的数量：
+要创建一个数组来保存扩展详细信息，我们首先需要知道数组的大小。您可以通过将后一个参数留空来请求扩展的数量：
+
+```c++
+uint32_t extensionCount = 0;
+vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
+```
+
+现在可以根据支持的扩展数量创建对应大小的数组用于保存扩展详细信息（`include <vector>`）：
+
+```c++
+std::vector<VkExtensionProperties> extensions(extensionCount);
+```
+
+最后再次调用函数用刚刚创建的数组接收支持的扩展详细信息列表：
+
+```c++
+vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
+```
+
+每个 [`VkExtensionProperties`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkExtensionProperties.html) 结构都包含扩展的名称和版本。我们可以用一个简单的for循环来列出它们（`\t`制表符缩进）：
+
+```c++
+std::cout << "available extensions:\n";
+
+for (const auto& extension : extensions) {
+    std::cout << '\t' << extension.extensionName << '\n';
+}
+```
+
+如果您想提供有关Vulkan支持的一些详细信息，您可以将此代码添加到`createInstance`函数中。可以尝试挑战一下，创建一个函数，以检查`glfwGetRequiredInstanceExtensions获取到的扩展是否都包含在设备支持的扩展列表中。
+
+### 收尾工作
+
