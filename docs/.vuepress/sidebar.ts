@@ -26,7 +26,7 @@ export default defineSidebarConfig(
       "",
       "4_base_code",
       "5_instance",
-      "5_instance",
+      "6_validation_layers",
     ],
     "/CCNA/": [
       "",
