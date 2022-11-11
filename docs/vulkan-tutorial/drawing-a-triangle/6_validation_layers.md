@@ -6,7 +6,7 @@ article: false
 
 ## 什么是校验层？
 
-Vulkan API 的设计是紧紧围绕最小化驱动程序开销进行的，所以，默认情况下，Vulkan API 提供的错误检查功能非常有限。很多很基本的错误 都没有被 Vulkan API 显式地处理，遇到错误程序会直接崩溃或者发生未被明确定义的行为（Segmentation fault）。Vulkan 需要我们显式地定义每一个操作，所以就很容易在使用过程中产生一些小错误，比如使用了一个新的GPU特性，却忘记在逻辑设备创建时请求这一特性。
+Vulkan API 的设计是紧紧围绕最小化驱动程序开销进行的，所以，默认情况下，Vulkan API 提供的错误检查功能非常有限。很多很基本的错误 都没有被 Vulkan API 显式地处理，遇到错误程序会直接崩溃或者发生未被明确定义的行为（即Segmentation fault）。Vulkan 需要我们显式地定义每一个操作，所以就很容易在使用过程中产生一些小错误，比如使用了一个新的GPU特性，却忘记在逻辑设备创建时请求这一特性。
 
 然而，这并不意味着我们不能将错误检查加入API调用。Vulkan 引入了校验层来优雅地解决这个问题。校验层是一个可选的可以用来在 Vulkan API 函数调用上进行附加操作的组件。校验层常被用来做下面的工作：
 
@@ -63,7 +63,7 @@ const std::vector<const char*> validationLayers = {
 #endif
 ```
 
-接着我们创建一个函数`checkValidationLayerSupport`用来请求所有可用的校验层。首先创建一个整数并调用一次 [`vkEnumerateInstanceLayerProperties`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkEnumerateInstanceLayerProperties.html)函数获取所有可用的校验层数量。接着再创建一个`VkLayerProperties`数组并在再调用一次 [`vkEnumerateInstanceLayerProperties`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkEnumerateInstanceLayerProperties.html) 获取校验层列表。（这与前面使用 [`vkEnumerateInstanceExtensionProperties`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkEnumerateInstanceExtensionProperties.html) 函数获取所有可用的扩展步骤是一致的）
+接着我们创建一个函数`checkValidationLayerSupport`用来请求所有可用的校验层。首先创建一个整数并调用一次 [`vkEnumerateInstanceLayerProperties`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkEnumerateInstanceLayerProperties.html)函数获取所有可用的校验层数量。接着再创建一个`VkLayerProperties`数组（用于接收所有的）并在再调用一次 [`vkEnumerateInstanceLayerProperties`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkEnumerateInstanceLayerProperties.html)获取校验层列表。（这与前面使用 [`vkEnumerateInstanceExtensionProperties`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkEnumerateInstanceExtensionProperties.html) 函数获取所有可用的扩展步骤是一致的）
 
 ```c++
 bool checkValidationLayerSupport() {
@@ -127,11 +127,11 @@ if (enableValidationLayers) {
 
 ## 回调消息
 
-默认情况下，校验层会在标准输出中打印出错误信息，我们也可以通过指定回调函数来自定义消息的处理方式。有些错误往往并不是致命的错误，因此我们可以通过这样的方式屏蔽这类消息。如果你对此不感兴趣，你可以选择跳过这一章节。
+默认情况下，校验层会在标准输出（控制台）中打印出错误信息，我们也可以通过指定**回调函数**来自定义消息的处理方式。有些错误往往并不是致命的错误，因此我们可以通过这样的方式屏蔽这类消息。如果你对此不感兴趣，你可以选择跳过这一章节。
 
 设置回调信息需要使用 `VK_EXT_debug_utils` 扩展。
 
-我们创建一 `getRequiredExtensions`函数，根据是否启用校验层来返回所需的扩展列表：
+我们创建一个 `getRequiredExtensions`函数，根据是否启用校验层来返回所需的扩展列表：
 
 ```c++
 std::vector<const char*> getRequiredExtensions() {
@@ -208,11 +208,13 @@ if (messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {
 回调函数返回了一个布尔值，用来表示引发校验层处理的 Vulkan API 调用是否被中断。如果返回值为true，对应 Vulkan API 调用就会返回 `VK_ERROR_VALIDATION_FAILED_EXT` 错误代码。通常，只在测试校验层本身时会返回true，其余情况下，回调函数
  应该返回 `VK_FALSE`。
 
-定义完成回调函数后要配置 Vulkan 使用这个回调函数。也许有点令人惊讶的是，在 Vulkan 中即便是调试回调信息也需要手动进行资源的创建与回收。我们需要一个`VkDebugUtilsMessengerEXT`对象来存储回调函数信息，然后将它提交给Vulkan完成回调函数的设置:
+定义完成回调函数后要配置 Vulkan 使用这个回调函数。也许有点令人惊讶的是，在 Vulkan 中即便是调试回调信息也需要手动进行资源的创建与回收。我们需要一个`VkDebugUtilsMessengerEXT`（回调信使）对象来存储回调函数信息，然后将它提交给Vulkan完成回调函数的设置:
 
 ```c++
 VkDebugUtilsMessengerEXT debugMessenger;
 ```
+
+> 译者注：此处用于存储回调函数的对象我讲翻译为“信使”，因为译者在中文网络没有找到其他更好的翻译。信使，顾名思义就是将程序内发生的错误按照回调函数的格式“带”出来。
 
 接着在 `initVulkan` 中的 `createInstance`后添加一个`setupDebugMessenger`函数：
 
@@ -228,7 +230,7 @@ void setupDebugMessenger() {
 }
 ```
 
-然后我们需要填写`VkDebugUtilsMessengerCreateInfoEXT`结构体的所需信息：
+然后我们需要填写`VkDebugUtilsMessengerCreateInfoEXT`（创建信使信息）结构体的所需信息：
 
 ```c++
 VkDebugUtilsMessengerCreateInfoEXT createInfo{};
@@ -239,7 +241,7 @@ createInfo.pfnUserCallback = debugCallback;
 createInfo.pUserData = nullptr; // Optional
 ```
 
-`messageSeverity`字段允许您指定您希望回调函数处理的消息等级。在这里，除了`VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT`外指定了所有类型，以接收所有可能的问题信息，同时省略冗长的一般调试信息。
+`messageSeverity`（信息重要性）字段允许您指定您希望回调函数处理的消息等级。在这里，除了`VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT`外指定了所有类型，以接收所有可能的问题信息，同时省略冗长的一般调试信息。
 
 同样，`messageType`字段允许您过滤回调函数的消息类型。在这里我们启用了所有类型。读者可以根据自己的需要开启和禁用处理的消息类型。
 
@@ -247,7 +249,7 @@ createInfo.pUserData = nullptr; // Optional
 
 有许多方式配置校验层消息和回调，更多信息可以参考扩展的[规范文档](https://www.khronos.org/registry/vulkan/specs/1.3-extensions/html/chap50.html#VK_EXT_debug_utils)。
 
-此结构应传递给`vkCreateDebugUtilsMessengerEXT`函数，以创建`VkDebugUtilsMessengerEXT`对象。不幸的是，由于此函数是一个扩展函数，因此它不会自动加载。我们必须使用[`vkGetInstanceProcAddr`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkGetInstanceProcAddr.html)自己查找其地址。我们将创建自己的代理函数，在后台处理这个问题。我把它添加到`HelloTriangleApplication`类定义的正上方。
+此结构应传递给`vkCreateDebugUtilsMessengerEXT`函数，以创建`VkDebugUtilsMessengerEXT`信使对象。不幸的是，由于此函数是一个扩展函数，因此它不会自动加载。我们必须使用[`vkGetInstanceProcAddr`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkGetInstanceProcAddr.html)自己查找其地址。我们将创建自己的代理函数，在后台处理这个问题。我把它添加到`HelloTriangleApplication`类定义的正上方（或者是作为类的静态函数）。
 
 ```c++
 VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger) {
@@ -270,7 +272,7 @@ if (CreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger
 
 函数的第二个参数是可选的分配器回调函数，我们没有自定义的分配 器，所以将其设置为`nullptr`。由于我们的调试回调是针对特定Vulkan 实例和它的校验层，所以需要在第一个参数指定调试回调作用的Vulkan实例。
 
-最后`VkDebugUtilsMessengerEXT`对象需要通过调用`vkDestroyDebugUtilsMessengerEXT`来清理。与`vkCreateDebugUtilsMessengerEXT`类似，这个函数需要手动加载。
+最后`VkDebugUtilsMessengerEXT`信使对象需要通过调用`vkDestroyDebugUtilsMessengerEXT`来清理。与`vkCreateDebugUtilsMessengerEXT`类似，这个函数需要手动加载。
 
 ```c++
 void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator) {
@@ -281,7 +283,7 @@ void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT
 }
 ```
 
-请确保这个代理函数需要被定义为静态或者类之外，然后我们在 `cleanup` 中调用他：
+请确保这个代理函数需要被定义为静态或者类之外，然后我们在 `cleanup` 中调用：
 
 ```c++
 void cleanup() {
@@ -296,4 +298,82 @@ void cleanup() {
     glfwTerminate();
 }
 ```
+
+## 调试实例的创建与销毁
+
+尽管我们现在已经添加了校验层用于调试程序，但是校验层并没有覆盖到所有的部分。因为调试消息的创建依赖于实例，所以他只在实例创建后才能生效，并且他需要在实例销毁前销毁，因此其也无法对实例的销毁进行调试。
+
+但是，如果您仔细阅读[扩展文档](https://github.com/KhronosGroup/Vulkan-Docs/blob/master/appendices/VK_EXT_debug_utils.txt#L120)，您会发现有一种方法可以专门为这两个函数调用创建一个单独的调试消息。您只需将`VkDebugUtilsMessengerCreateInfoEXT`（创建信使信息）结构体的指针传递给[`VkInstanceCreateInfo`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkInstanceCreateInfo.html)（实例创建信息）结构体的`pNext`字段。首先将创建信使信息结构体的部分从原先的`setupDebugMessenger`（设置信使函数）中分离出来，将信息创建作为一个单独的函数`populateDebugMessengerCreateInfo`：
+
+```c++
+void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo) {
+    createInfo = {};
+    createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+    createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+    createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+    createInfo.pfnUserCallback = debugCallback;
+}
+
+...
+
+void setupDebugMessenger() {
+    if (!enableValidationLayers) return;
+
+    VkDebugUtilsMessengerCreateInfoEXT createInfo;
+    populateDebugMessengerCreateInfo(createInfo);
+
+    if (CreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger) != VK_SUCCESS) {
+        throw std::runtime_error("failed to set up debug messenger!");
+    }
+}
+```
+
+修改原先 `createInstance` （创建实例）函数内的部分：
+
+```c++
+void createInstance() {
+    ...
+
+    VkInstanceCreateInfo createInfo{};
+    createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+    createInfo.pApplicationInfo = &appInfo;
+
+    ...
+
+    VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
+    if (enableValidationLayers) {
+        createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+        createInfo.ppEnabledLayerNames = validationLayers.data();
+
+        populateDebugMessengerCreateInfo(debugCreateInfo);
+        createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*) &debugCreateInfo;
+    } else {
+        createInfo.enabledLayerCount = 0;
+
+        createInfo.pNext = nullptr;
+    }
+
+    if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
+        throw std::runtime_error("failed to create instance!");
+    }
+}
+```
+
+`debugCreateInfo`变量放置在if语句之外，以确保在`vkCreateInstance`调用之前不会被销毁。通过这种方式创建一个额外的调试信使，它将在`vkCreateInstance`和`vkDestroyInstance`期间生效，然后随着实例的销毁自动被清理。
+
+## 测试
+
+如果我们不在 `cleanup` 时调用`DestroyDebugUtilsMessengerEXT`来销毁回调信使，那么你可能会在控制台遇到以下信息：
+
+```
+validation layer: Validation Error: [ VUID-vkDestroyInstance-instance-00629 ] Object 0: handle = 0x151044000, type = VK_OBJECT_TYPE_INSTANCE; Object 1: handle = 0xfd5b260000000001, type = VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT; | MessageID = 0x8b3d8e18 | OBJ ERROR : For VkInstance 0x151044000[], VkDebugUtilsMessengerEXT 0xfd5b260000000001[] has not been destroyed. The Vulkan spec states: All child objects created using instance must have been destroyed prior to destroying instance (https://vulkan.lunarg.com/doc/view/1.3.231.0/mac/1.3-extensions/vkspec.html#VUID-vkDestroyInstance-instance-00629)
+```
+
+## 更多配置
+
+验证层行为的设置比`VkDebugUtilsMessengerCreateInfoEXT`结构中指定的设置要多得多。浏览Vulkan SDK，然后转到Config目录。在那里，您将找到一个`vk_layer_settings.txt`文件，该文件解释了如何配置各个校验层。
+
+要为您自己的应用程序配置校验层设置，请将文件复制到项目的`Debug` 调试和`Release`发布目录，并按照文档中的说明设置所需的参数。但是，在本教程的其余部分，我将假设您使用的是默认设置。
+
+在本教程中，我们将故意犯一些错误，以展示验证层在处理这些问题时的作用。
 
