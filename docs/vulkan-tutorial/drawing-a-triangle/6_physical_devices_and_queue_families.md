@@ -262,7 +262,7 @@ bool isDeviceSuitable(VkPhysicalDevice device) {
 }
 ```
 
-为了边界，我们将检查移动到结构体内部：
+为了便捷，我们将检查移动到结构体内部：
 
 ```c++
 struct QueueFamilyIndices {

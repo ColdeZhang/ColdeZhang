@@ -24,11 +24,13 @@ export default defineSidebarConfig(
     ],
     "/vulkan-tutorial/drawing-a-triangle/": [
       "",
-      "4_base_code",
-      "5_instance",
-      "6_validation_layers",
-      "7_physical_devices_and_queue_families",
-      "8_logical_device_and_queues",
+      "1_overview",
+      "2_development_environment",
+      "3_base_code",
+      "4_instance",
+      "5_validation_layers",
+      "6_physical_devices_and_queue_families",
+      "7_logical_device_and_queues",
     ],
     "/CCNA/": [
       "",
