@@ -15,7 +15,7 @@ Vulkan 官方教程 -  翻译
 
 ## 关于
 
-本教程将教您使用[Vulkan](https://www.khronos.org/vulkan/)图形和计算API的基础知识。Vulkan是[Khronos公司](https://www.khronos.org/)（以OpenGL闻名）的新API，可以更好地抽象现代显卡。这个新接口允许您更好地描述应用程序对显卡的操作，与[OpenGL](https://en.wikipedia.org/wiki/OpenGL)和[Direct3D](https://en.wikipedia.org/wiki/Direct3D)等现有API相比，这可以带来更好的性能和不那么令人惊讶的驱动程序行为。Vulkan背后的想法与[Direct3D 12](https://en.wikipedia.org/wiki/Direct3D#Direct3D_12)和[Metal](https://en.wikipedia.org/wiki/Metal_(API))的想法相似，但Vulkan具有完全跨平台的优势，允许您同时为Windows、Linux和Android等平台开发应用程序。
+本教程将向您介绍[Vulkan](https://www.khronos.org/vulkan/)图形和计算API的基础知识。Vulkan是[Khronos公司](https://www.khronos.org/)（以OpenGL闻名）的新API，可以更好地抽象现代显卡。这个新接口允许您更好地描述应用程序对显卡的操作，与[OpenGL](https://en.wikipedia.org/wiki/OpenGL)和[Direct3D](https://en.wikipedia.org/wiki/Direct3D)等现有API相比，这可以带来更好的性能和不那么令人惊讶的驱动程序行为。Vulkan背后的想法与[Direct3D 12](https://en.wikipedia.org/wiki/Direct3D#Direct3D_12)和[Metal](https://en.wikipedia.org/wiki/Metal_(API))的想法相似，但Vulkan具有完全跨平台的优势，允许您同时为Windows、Linux和Android等平台开发应用程序。
 
 然而，您为这些好处付出的代价是，必须使用更冗长的API。与图形API相关的每个细节都需要手动管理，包括帧缓冲区的创建和缓冲区纹理图像等对象的内存管理。图形驱动程序不会在这方便做太多事情，这意味着您必须在应用程序中做更多工作，以确保正确运行。
 

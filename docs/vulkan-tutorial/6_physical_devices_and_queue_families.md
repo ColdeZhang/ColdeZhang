@@ -179,7 +179,7 @@ uint32_t findQueueFamilies(VkPhysicalDevice device) {
 }
 ```
 
-因为在下一章节中我们会需要用到另一个队列，因此我们在这里就先做好准备工作。将需要检查的队列类型打包成一个结构体，方便后期扩充：
+因为在下一章节中我们会需要用到另一个队列，因此我们在这里就先做好准备工作。将需要检查的队列族索引打包成一个结构体，方便后期扩充：
 
 ```c++
 struct QueueFamilyIndices {
@@ -193,7 +193,9 @@ QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device) {
 }
 ```
 
-但是，如果队列族不可用呢？我们可以在`findQueueFamilies`中抛出一个异常，但我们不会在这里根据这个异常决定此设备是否可用。例如，我们可能更喜欢具有专用传输队列族的设备，但是我们并不会用到这个队列族。因此，我们需要某种方法来指示是否找到了特定的队列族。
+> 译者注：结构体存储的是队列族索引而不是队列族本身，因为设备中的每个队列族都有一个唯一索引，因此只需要保存索引即可。
+
+但是，如果队列族不可用呢？我们可以在`findQueueFamilies`中抛出一个异常，但我们不会在这里根据这个异常决定此设备是否可用。例如有可能出现这样的情况，我们可能更想要使用某种具有专用传输队列族的设备，但是我们并不会用到这个队列族。因此，我们别的某种方法来指示是否找到了特定的队列族。
 
 实际上我们没办法使用值来指示队列族是否存在，因为uint32_t的任何值理论上都可能是有效的队列族索引，包括0。幸运的是，C++17引入了一个数据结构来区分有或不存在值的情况：
 
@@ -229,7 +231,7 @@ QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device) {
 }
 ```
 
-使用[`vkGetPhysicalDeviceQueueFamilyProperties`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkGetPhysicalDeviceQueueFamilyProperties.html)函数获取设备支持的队列族列表，流程与先前获取物理显卡设备列表还有扩展列表一样：
+使用[`vkGetPhysicalDeviceQueueFamilyProperties`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkGetPhysicalDeviceQueueFamilyProperties.html)函数获取设备拥有的的队列族列表，流程与先前获取物理显卡设备列表还有扩展列表一样：
 
 ```c++
 uint32_t queueFamilyCount = 0;
@@ -297,3 +299,5 @@ for (const auto& queueFamily : queueFamilies) {
 ```
 
 太好了，这就是我们现在找到合适的物理设备所需要的一切！下一步是创建一个逻辑设备。
+
+> [截止于此的所有代码示例](https://vulkan-tutorial.com/code/03_physical_device_selection.cpp)

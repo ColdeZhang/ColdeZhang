@@ -181,3 +181,5 @@ void cleanup() {
 [`vkDestroyInstance`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkDestroyInstance.html)函数的参数很简单。如上一章所述，Vulkan中的分配和处理位置函数都可以传入一个回调函数，此处暂时不需要使用回调因此传入`nullptr`即可。同样的，在后面的章节中所有创建出来的资源都应当在程序退出时进行回收。
 
 在进行更复杂的操作之前，我们先熟悉一下[校验层](https://vulkan-tutorial.com/Drawing_a_triangle/Setup/Validation_layers)来帮助我们进行应用程序的调试。
+
+> [截止于此的所有代码示例](https://vulkan-tutorial.com/code/01_instance_creation.cpp)

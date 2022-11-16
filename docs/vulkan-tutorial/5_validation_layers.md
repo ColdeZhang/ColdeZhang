@@ -377,3 +377,4 @@ validation layer: Validation Error: [ VUID-vkDestroyInstance-instance-00629 ] Ob
 
 在本教程中，我们将故意犯一些错误，以展示验证层在处理这些问题时的作用。
 
+> [截止于此的所有代码示例](https://vulkan-tutorial.com/code/02_validation_layers.cpp)
