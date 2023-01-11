@@ -91,7 +91,7 @@ Vulkan中的图形管线是通过创建[`VkPipeline`](https://www.khronos.org/re
 
 即便简化了看起来仍然很复杂，但其实每一步在接下来的将章节中都很简单。如果在后面的章节中对细节的存在价值感到不解，后退一步，回头来看看本章。
 
-
+![](https://sslbackend.deercloud.site:450/LightPicture/2023/01/0b53a68f973d814b.png)
 
 ## API相关概念
 
