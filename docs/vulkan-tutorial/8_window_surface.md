@@ -98,7 +98,7 @@ void cleanup() {
 
 ## 检查显示支持（Presentation Support）
 
-虽然Vulkan实现可能支持窗口系统集成，但这并不意味着系统中的每台设备都支持Vulkan。因此，我们需要扩展`isDeviceSuitable`功能，以确保设备可以将图像显示到我们创建的窗口表面。由于显示是特定于队列的功能，因此这个问题实际上是找到一个能够在我们创建的表面显示图像的队列族。
+虽然Vulkan实现可以支持窗口系统集成，但这并不意味着设备上的每张显卡都支持Vulkan。因此，我们需要扩展`isDeviceSuitable`函数的功能，以确保设备可以将图像显示到我们创建的窗口表面。由于显示是特定于队列的功能，因此这个问题实际上是找到一个能够在我们创建的表面显示图像的队列族。
 
 实际上，支持绘图命令的队列族和支持显示的队列族可能并不重复。因此，我们必须在我们的程序中预留保存位置，修改`QueueFamilyIndices`结构，新增一个显示队列族：
 
@@ -127,3 +127,46 @@ if (presentSupport) {
 
 ## 创建显示队列（Presentation Queue）
 
+剩下的一件事是修改逻辑设备创建过程，以创建显示队列并获取[`VkQueue`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkQueue.html)句柄。首先添加一个成员变量：
+
+```c++
+VkQueue presentQueue;
+```
+
+接下来，我们需要给每个族准备[`VkDeviceQueueCreateInfo`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkDeviceQueueCreateInfo.html)结构来创建族的队列。一种优雅的方法是创建一个包含所需队列族的集合，然后遍历实现：
+
+```c++
+#include <set>
+
+...
+
+QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
+
+std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+std::set<uint32_t> uniqueQueueFamilies = {indices.graphicsFamily.value(), indices.presentFamily.value()};
+
+float queuePriority = 1.0f;
+for (uint32_t queueFamily : uniqueQueueFamilies) {
+    VkDeviceQueueCreateInfo queueCreateInfo{};
+    queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+    queueCreateInfo.queueFamilyIndex = queueFamily;
+    queueCreateInfo.queueCount = 1;
+    queueCreateInfo.pQueuePriorities = &queuePriority;
+    queueCreateInfos.push_back(queueCreateInfo);
+}
+```
+
+修改 [`VkDeviceCreateInfo`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkDeviceCreateInfo.html) 使用新的参数：
+
+```c++
+createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
+createInfo.pQueueCreateInfos = queueCreateInfos.data();
+```
+
+如果队列族相同，那么我们只需要传递一次其索引。最后，获取队列句柄：
+
+```c++
+vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQueue);
+```
+
+如果队列家族相同，这两个句柄现在很可能具有相同的值。在下一章中，我们将研究交换链，以及如何使用交换链展示图像。
