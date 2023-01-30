@@ -31,6 +31,8 @@ export default defineSidebarConfig(
       "5_validation_layers",
       "6_physical_devices_and_queue_families",
       "7_logical_device_and_queues",
+      "8_window_surface",
+      "9_swap_chain",
     ],
     "/CCNA/": [
       "",
