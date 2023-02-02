@@ -170,3 +170,5 @@ vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQueue);
 ```
 
 如果队列家族相同，这两个句柄现在很可能具有相同的值。在下一章中，我们将研究交换链，以及如何使用交换链展示图像。
+
+> [截止于此的所有代码示例](https://vulkan-tutorial.com/code/05_window_surface.cpp)

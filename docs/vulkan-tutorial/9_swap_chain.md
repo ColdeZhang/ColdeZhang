@@ -336,3 +336,120 @@ createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
  `imageArrayLayers` 用于指定每个图像包含的层数。除非是立体3D应用程序，否则这始终为1。 `imageUsage`用于设置交换链中的图像的作用。在本教程中我们我们将直接渲染图像，即直接对其着色。
 
 还可以先将图像渲染为单独的图像，用于做一些后处理等操作。在这种情况下，可以设置为`VK_IMAGE_USAGE_TRANSFER_DST_BIT`，并使用内存操作将渲染的图像传输到交换链图像。
+
+```c++
+QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
+uint32_t queueFamilyIndices[] = {indices.graphicsFamily.value(), indices.presentFamily.value()};
+
+if (indices.graphicsFamily != indices.presentFamily) {
+    createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+    createInfo.queueFamilyIndexCount = 2;
+    createInfo.pQueueFamilyIndices = queueFamilyIndices;
+} else {
+    createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+    createInfo.queueFamilyIndexCount = 0; // 排他模式不需要指定
+    createInfo.pQueueFamilyIndices = nullptr; // 排他模式不需要指定
+}
+```
+
+如果图形队列族与显示队列不同，需要指定如何处理将在多个队列族中使用的交换链图像（imageSharingMode）。我们将从图形队列中绘制交换链中的图像，然后在显示队列中提交它们。有两种方法可以处理从多个队列访问的图像：
+
+- `VK_SHARING_MODE_EXCLUSIVE`（排他模式）：图像的所有权只归属于一个队列族，必须手动转移所有权给另一个队列族才可以被其访问。这个设置拥有最好的性能表现。
+- `VK_SHARING_MODE_CONCURRENT`（并发模式）：图像可以被多个队列族访问而不需要手动转移所有权。
+
+因为关于所有权的内容会在后面的章节介绍，此处我们先使用并发模式（`VK_SHARING_MODE_CONCURRENT`）规避所有权的问题。并发模式使用`queueFamilyIndexCount`指定共享图像所有权的队列数，使用`pQueueFamilyIndices`指定有哪些队列族。如果图形队列族和显示队列族相同，（大多数硬件都是如此）那么我们就直接使用排他模式（`VK_SHARING_MODE_EXCLUSIVE`），因为并发模式要求指定至少两个不同的队列族。
+
+```c++
+createInfo.preTransform = swapChainSupport.capabilities.currentTransform;
+```
+
+如果交换链中的图像支持变换（ `capabilities`中的`supportedTransforms`），我们还可以指定变换的方式，例如90度顺时针旋转或水平翻转。此处我们不希望有额外的变换，因此设定为使用当前变换（`currentTransform`）即可。
+
+```c++
+createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+```
+
+ `compositeAlpha` 字段指当该表面与某些窗口系统上的其他表面组合在一起时使用的alpha合成模式。多数情况下我们选择直接忽略alpha通道，因此将其配置为`VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR`。
+
+```c++
+createInfo.presentMode = presentMode;
+createInfo.clipped = VK_TRUE;
+```
+
+然后就是设置显示模式。
+
+如果设置`clipped`为`VK_TRUE`，表明我们不在乎被遮住的像素的颜色（裁剪掉所有被遮住的像素），例如被另一个窗口遮住。除非程序确实需要这些像素来获取有用的结果，否则裁剪掉他们以获得更好的性能。
+
+```c++
+createInfo.oldSwapchain = VK_NULL_HANDLE;
+```
+
+最后一项配置是 `oldSwapChain`。当用户在程序运行的时候调整了窗口大小，交换链可能会变得无效或未优化。在这种情况下，需要从头开始重新创建交换链，然后在此字段中指定对旧链的引用。这是一个相对复杂的流程，我们将在后面的章节中了解更多信息。目前，我们将假设我们不需要重新创建交换链。
+
+现在，在类中创建一个 `VkSwapchainKHR`对象存储我们要创建的交换链：
+
+```
+VkSwapchainKHR swapChain;
+```
+
+调用`vkCreateSwapchainKHR`创建交换链：
+
+```c++
+if (vkCreateSwapchainKHR(device, &createInfo, nullptr, &swapChain) != VK_SUCCESS) {
+    throw std::runtime_error("failed to create swap chain!");
+}
+```
+
+参数分别是逻辑设备、交换链创建信息、可选的自定义分配器以及用于接受创建结果的交换链指针。最后不要忘了，在销毁逻辑设备之前（因为交换链依赖逻辑设备），使用`vkDestroySwapchainKHR`清理交换链：
+
+```c++
+void cleanup() {
+    vkDestroySwapchainKHR(device, swapChain, nullptr);
+    ...
+}
+```
+
+现在尝试编译运行，检查是否成功创建了交换链。如果你遇到了类似于`Failed to find 'vkGetInstanceProcAddress' in layer SteamOverlayVulkanLayer.dll`的报错，请查阅[帮助](https://vulkan-tutorial.com/FAQ)。
+
+尝试将 `createInfo.imageExtent = extent;`注释掉，并且打开校验层。你会看到校验层给你输出的错误信息，以及有用的解决方案：
+
+```
+[校验层信息]: Validation Error: [ VUID-VkSwapchainCreateInfoKHR-imageExtent-01274 ] Object 0: handle = 0x133025c18, type = VK_OBJECT_TYPE_DEVICE; | MessageID = 0x7cd0911d | vkCreateSwapchainKHR() called with imageExtent = (0,0), which is outside the bounds returned by vkGetPhysicalDeviceSurfaceCapabilitiesKHR(): currentExtent = (1440,1280), minImageExtent = (1,1), maxImageExtent = (16384,16384). The Vulkan spec states: imageExtent must be between minImageExtent and maxImageExtent, inclusive, where minImageExtent and maxImageExtent are members of the VkSurfaceCapabilitiesKHR structure returned by vkGetPhysicalDeviceSurfaceCapabilitiesKHR for the surface (https://vulkan.lunarg.com/doc/view/1.3.231.0/mac/1.3-extensions/vkspec.html#VUID-VkSwapchainCreateInfoKHR-imageExtent-01274)
+```
+
+## 获取交换链图像
+
+创建完交换链后，需要检索其中[`VkImages`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkImage.html)的句柄。我们将在后面的渲染步骤中学习[`VkImages`](https://www.khronos.org/registry/vulkan/specs/1.0/man/html/VkImage.html)的具体用法。现在添加一个类成员来存储句柄：
+
+```c++
+std::vector<VkImage> swapChainImages;
+```
+
+交换链图像的生命周期与交换链是同步的，因此我们不需要手动创建或者销毁它们。
+
+在`createSwapChain`创建交换链函数的最后，（`vkCreateSwapchainKHR`）之后获取交换链图像。因为我们先前只指定了交换链的最小队列长度，没有指定最大大小，也就是说我们预先无法知道有多少个交换链图像。和获取Vulkan的其他对象相同，我们需要先获取数量，再根据数量获取列表。
+
+```c++
+uint32_t swapChainImageCount;
+vkGetSwapchainImagesKHR(device, swapChain, &imageCount, nullptr);
+swapChainImages.resize(imageCount);
+vkGetSwapchainImagesKHR(device, swapChain, &imageCount, swapChainImages.data());
+```
+
+最后我们再将图像格式（format）和交换范围（extent）保存在成员变量里，以便于在后面的章节中使用
+
+```c++
+VkSwapchainKHR swapChain;
+std::vector<VkImage> swapChainImages;
+VkFormat swapChainImageFormat;
+VkExtent2D swapChainExtent;
+
+...
+
+swapChainImageFormat = surfaceFormat.format;
+swapChainExtent = extent;
+```
+
+现在我们已经拥有了一组空白图像，并且具备了绘制这些图像与现实这些图像到窗口的能力。下一章将开始介绍我们如何将图像设置为渲染目标，然后我们开始研究实际的图形管道和绘图指令！
+
+> [截止于此的所有代码示例](https://vulkan-tutorial.com/code/06_swap_chain_creation.cpp)
